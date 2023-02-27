@@ -683,7 +683,7 @@ class VarExpr(expr: Expr, dot: FilePoint, ident: VstIdent<TypeRef>) extends Expr
 	def isAssignableFrom(decl: VstField, compound: VstCompound) -> bool {
 		match (decl.writability) {
 			WRITEABLE => return true;
-			PRIVATE_WRITEABLE => return decl.receiver == compound;
+			PRIVATE_WRITEABLE => return decl.receiver.verifier.file == compound.verifier.file;
 			READ_ONLY => return false;
 		}
 	}
