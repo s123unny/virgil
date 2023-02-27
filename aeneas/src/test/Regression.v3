@@ -141,10 +141,35 @@ class SemanTestCase extends TestCase {
 			if (ex != null) expected = ex.error;
 			malformed = p.ERROR.numErrors > 0;
 		}
+		// Parse the file, looking for //@file annotation that splits the test into multiple files.
+		var prev = 0, prevName = fileName;
+		var files: Vector<(string, Array<byte>)>;
+		while (p.curPos < p.input.length) {
+			Parser.skipToNextLine(p);
+			var pos = p.curPos;
+			if (p.optN("//@file") >= 0) {
+				var data = Arrays.range(p.input, prev, pos);
+				if (files == null) files = Vector.new();
+				files.put(prevName, data);
+				if (p.opt1('=') >= 0) {
+					var fstart = p.curPos;
+					Parser.skipToEndOfLine(p);
+					prevName = Arrays.range(p.input, fstart, p.curPos);
+				} else {
+					prevName = "test";
+				}
+				prev = pos;
+			}
+		}
+		// Handle the last line
+		if (files != null && prev < p.input.length) {
+			var data = Arrays.range(p.input, prev, p.curPos);
+			files.put(prevName, data);
+		}
 	}
 	def run() -> bool {
 		if (malformed) return false;
-		var error = compile().prog.ERROR;
+		var error = splitAndCompile().prog.ERROR;
 
 		if (error.numErrors > 0) {
 			if (expected != null) {
@@ -159,6 +184,13 @@ class SemanTestCase extends TestCase {
 			return false;
 		}
 		return expected == null;
+	}
+	def splitAndCompile() -> Compilation {
+		var prog = Program.new();
+		prog.setInput(fileName, input);
+		var compilation = Compilation.new(compiler, prog);
+		compilation.compile();
+		return compilation;
 	}
 	def report() -> string {
 		if (malformed) return "Semantic test is malformed";

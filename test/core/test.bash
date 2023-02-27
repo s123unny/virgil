@@ -1,15 +1,8 @@
 #!/bin/bash
 
-function do_parser_tests() {
-    cd parser
-    print_status Parser ""
-    run_v3c "" -test -expect=failures.txt *.v3 | tee $OUT/out | $PROGRESS
-    cd ..
-}
-
-function do_seman_tests() {
-    cd seman
-    print_status Semantic ""
+function do_tests() {
+    cd $1
+    print_status $2 ""
     run_v3c "" -test -expect=failures.txt *.v3 | tee $OUT/out | $PROGRESS
     cd ..
 }
@@ -18,8 +11,9 @@ function do_seman_tests() {
 if [ $# -gt 0 ]; then
 	TESTS="$@"
 else
-	(do_parser_tests)
-	(do_seman_tests)
+	(do_tests parser Parser)
+	(do_tests seman Semantic)
+	(do_tests visibility Visibility)
 
 	TESTS=*.v3
 fi
