@@ -606,7 +606,7 @@ class VstCompoundVerifier {
 			// lookup a field or method
 			var member = classType.classDecl.memberMap[name];
 			if (member != null) {
-//				if (member.isPrivate) return null;
+				if (!canAccessMember(member)) return null;
 				var memberType = member.getType();
 				if (memberType != null) memberType = memberType.substitute(classType.getTypeArgs());
 				return ResolvedMember.new(classType, member, null, memberType);
