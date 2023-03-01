@@ -156,7 +156,7 @@ class Verifier(compiler: Compiler, prog: Program) {
 			var superclause = decl.superclause;
 			if(hasSuper && superclause == null) superclause = newSuperClause(name.rangeOf(0));
 			var params = VstList.new(name.range(), decl.getParams());
-			constructor = VstNew.new(name, params, superclause, BlockStmt.new(VstList<Stmt>.new(name.rangeOf(0), null)));
+			constructor = VstNew.new(decl.isPrivate, name, params, superclause, BlockStmt.new(VstList<Stmt>.new(name.rangeOf(0), null)));
 			constructor.isSynthetic = true;
 			constructor.typeEnv = decl.typeEnv;
 			constructor.receiver = decl;
