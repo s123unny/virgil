@@ -2,6 +2,8 @@
 component CiRuntimeApi {
 	def c11 = C.new(11);
 	def c12 = C.new(12);
+	def buffer = Array<byte>.new(128);
+	def rbuffer: Range<byte> = buffer;
 
 	var errors: int;
 
@@ -57,6 +59,11 @@ component CiRuntimeApi {
 		var x4 = CiRuntime.forgeClosure<C, int, int>(func3, c12);
 		if (x4(24) != 36) {
 			System.puts("Error: CiRuntime.unpack/forgeClosure\n");
+			errors++;
+		}
+		var x5 = CiRuntime.forgeRange<byte>(Pointer.atContents(buffer), buffer.length);
+		if (x5 != rbuffer) {
+			System.puts("Error: CiRuntime.forgeRange\n");
 			errors++;
 		}
 

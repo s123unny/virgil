@@ -119,6 +119,7 @@ type Opcode {
 	case CreateClosure(method: IrMethod);
 	case ForgeClosure;
 	case UnpackClosure;
+	case ForgeRange;
 	// RefStruct operations
 	case RefStructAt;
 	case RefStructIn(offset: int);
@@ -149,6 +150,7 @@ type Opcode {
 	case PtrCmpSwp;
 	case PtrLoad;
 	case PtrStore;
+	case PtrDescale;
 	// Get caller instruction pointer or stack pointer
 	case CallerIp;
 	case CallerSp;
